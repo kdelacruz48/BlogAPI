@@ -1,8 +1,21 @@
+using BlogAPI.Data;
+using Microsoft.EntityFrameworkCore;
+using Serilog;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+Log.Logger = new LoggerConfiguration().MinimumLevel.Debug()
+    .WriteTo.File("log/postLog.txt",rollingInterval:RollingInterval.Month).CreateLogger(); 
 
+builder.Host.UseSerilog();
+builder.Services.AddDbContext<ApplicationDbContext>(option =>
+{
+    option.UseNpgsql(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
+});
 builder.Services.AddControllers();
+builder.Services.AddControllers(option => {
+    // option.ReturnHttpNotAcceptable = true;
+}).AddNewtonsoftJson();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddSwaggerGen();
 
@@ -20,5 +33,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
 
 app.Run();
