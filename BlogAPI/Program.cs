@@ -1,4 +1,6 @@
 using BlogAPI.Data;
+using BlogAPI.Repository;
+using BlogAPI.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -12,6 +14,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 {
     option.UseNpgsql(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
 });
+builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddControllers();
 builder.Services.AddControllers(option => {
     // option.ReturnHttpNotAcceptable = true;
@@ -20,6 +23,7 @@ builder.Services.AddControllers(option => {
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
