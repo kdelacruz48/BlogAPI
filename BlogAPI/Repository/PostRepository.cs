@@ -19,7 +19,7 @@ namespace BlogAPI.Repository
 
         public async Task<PostModel> UpdateAsync(PostModel entity)
         {
-            entity.Updated_date = DateTime.Now;
+            entity.Updated_date = DateTimeOffset.Now.ToUniversalTime();
             _db.APIPosts.Update(entity);
             await _db.SaveChangesAsync();
             return entity;

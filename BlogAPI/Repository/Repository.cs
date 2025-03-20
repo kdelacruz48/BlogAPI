@@ -1,5 +1,4 @@
 ﻿using BlogAPI.Data;
-using BlogAPI.Models;
 using BlogAPI.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;

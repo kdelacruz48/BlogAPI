@@ -14,7 +14,7 @@ namespace BlogAPI.Models
         public string Post { get; set; }
         public string? ImageUrl { get; set; }
         public string? Tag { get; set; }
-        public DateTime Created_date { get; set; }
-        public DateTime Updated_date { get; set; }
+        public DateTimeOffset Created_date { get; set; }
+        public DateTimeOffset Updated_date { get; set; }
     }
 }

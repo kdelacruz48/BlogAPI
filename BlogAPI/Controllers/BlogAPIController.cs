@@ -41,31 +41,35 @@ namespace BlogAPI.Controllers
                 _logger.LogError("Get posts failure: " + ex);
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string> { ex.ToString() };
-                
+
             }
             return _response;
         }
 
-        [HttpGet("{id:int}",Name ="GetPost")]
+        [HttpGet("{id:int}", Name = "GetPost")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> GetPost(int id)
         {
-            try 
+            try
             {
                 _logger.LogInformation("Getting post:" + id);
                 if (id == 0)
                 {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
                     _logger.LogError("Get post error with Id is 0");
-                    return BadRequest();
+                    return BadRequest(_response);
                 }
 
                 var post = await _dbPosts.GetAsync(u => u.Id == id);
                 if (post == null)
                 {
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.IsSuccess = false;
                     _logger.LogError("Get post error Id not found: " + id);
-                    return NotFound();
+                    return NotFound(_response);
                 }
                 _response.Result = post;
                 _response.StatusCode = HttpStatusCode.OK;
@@ -86,32 +90,37 @@ namespace BlogAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> CreatePost([FromBody]PostCreateDTO postModelDTO)
+        public async Task<ActionResult<APIResponse>> CreatePost([FromBody] PostCreateDTO postModelDTO)
         {
             try
             {
                 _logger.LogInformation("Attempting to create post");
-                if (await _dbPosts.GetAsync(u=> u.Title.ToLower() == postModelDTO.Title.ToLower())!=null)
+                if (await _dbPosts.GetAsync(u => u.Title.ToLower() == postModelDTO.Title.ToLower()) != null)
                 {
-                    ModelState.AddModelError("", "Post Title already exists");
-                    return BadRequest(ModelState);
+                    //ModelState.AddModelError("", "Post Title already exists");
+                    _response.StatusCode=HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    List<string> errors = new List<string>();
+                    errors.Add("Post title already exists");
+                    _response.ErrorMessages = errors;
+                    return BadRequest(_response);
                 }
 
-                if(postModelDTO == null)
+                if (postModelDTO == null)
                 {
                     return BadRequest(postModelDTO);
 
                 }
 
                 PostModel post = new()
-                {  
+                {
                     UserName = postModelDTO.UserName,
                     Title = postModelDTO.Title,
                     Post = postModelDTO.Post,
                     ImageUrl = postModelDTO.ImageUrl,
                     Tag = postModelDTO.Tag,
-                    Created_date = DateTime.UtcNow,
-                    Updated_date = DateTime.UtcNow
+                    Created_date = DateTimeOffset.Now.ToUniversalTime(),
+                    Updated_date = DateTimeOffset.Now.ToUniversalTime()
                 };
 
 
@@ -119,7 +128,7 @@ namespace BlogAPI.Controllers
 
                 _response.Result = post;
                 _response.StatusCode = HttpStatusCode.Created;
-                return CreatedAtRoute("GetPost", new {id =post.Id}, _response);
+                return CreatedAtRoute("GetPost", new { id = post.Id }, _response);
             }
             catch (Exception ex)
             {
@@ -134,21 +143,22 @@ namespace BlogAPI.Controllers
 
 
         [HttpDelete("{id:int}", Name = "DeletePost")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> DeletePost(int id)
         {
-            try 
+            try
             {
-                _logger.LogInformation("Attempting to delete post:" +id);
+                _logger.LogInformation("Attempting to delete post:" + id);
                 if (id == 0)
                 {
                     return BadRequest();
                 }
 
                 var post = await _dbPosts.GetAsync(u => u.Id == id);
-                if(post ==null)
+                if (post == null)
                 {
                     return NotFound();
                 }
@@ -156,13 +166,13 @@ namespace BlogAPI.Controllers
                 await _dbPosts.RemoveAsync(post);
 
                 _response.Result = post;
-                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
                 return Ok(_response);
             }
             catch (Exception ex)
             {
-                _logger.LogError("Delete post failure: "+ id+ ":" + ex);
+                _logger.LogError("Delete post failure: " + id + ":" + ex);
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string> { ex.ToString() };
 
@@ -172,11 +182,12 @@ namespace BlogAPI.Controllers
         }
 
         [HttpPut("{id:int}", Name = "PutPost")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> UpdatePost(int id, [FromBody]PostUpdateDTO postModelDTO)
+        public async Task<ActionResult<APIResponse>> UpdatePost(int id, [FromBody] PostUpdateDTO postModelDTO)
         {
-            try 
+            try
             {
                 _logger.LogInformation("Attempting to update post:");
                 if (postModelDTO == null || id != postModelDTO.Id)
@@ -193,14 +204,14 @@ namespace BlogAPI.Controllers
                     Post = postModelDTO.Post,
                     ImageUrl = postModelDTO.ImageUrl,
                     Tag = postModelDTO.Tag,
-                    Created_date = DateTime.UtcNow,
-                    Updated_date = DateTime.UtcNow
+                    Created_date = DateTimeOffset.Now.ToUniversalTime(),
+                    Updated_date = DateTimeOffset.Now.ToUniversalTime()
 
                 };
 
                 await _dbPosts.UpdateAsync(post);
 
-                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
                 return Ok(_response);
             }
