@@ -26,13 +26,27 @@ namespace BlogAPI.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult<APIResponse>> GetPosts()
+        [ResponseCache(Duration = 30)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> GetPosts([FromQuery] string? tag)
         {
             try
             {
+                
                 _logger.LogInformation("Getting all posts");
 
-                IEnumerable<PostModel> postList = await _dbPosts.GetAllAsync();
+                IEnumerable<PostModel> postList;
+
+                if (tag != null)
+                {
+                    postList = await _dbPosts.GetAllAsync(u => u.Tag == tag);
+                }
+                else
+                {
+                    postList = await _dbPosts.GetAllAsync();
+                }
+            
                 _response.Result = postList;
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;

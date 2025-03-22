@@ -21,6 +21,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddControllers();
+builder.Services.AddResponseCaching();
 
 var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
 
