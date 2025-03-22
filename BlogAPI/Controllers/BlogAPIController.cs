@@ -2,6 +2,7 @@
 using BlogAPI.Models;
 using BlogAPI.Models.DTO;
 using BlogAPI.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
@@ -23,6 +24,7 @@ namespace BlogAPI.Controllers
             this._response = new();
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<APIResponse>> GetPosts()
         {
@@ -46,6 +48,7 @@ namespace BlogAPI.Controllers
             return _response;
         }
 
+        [Authorize]
         [HttpGet("{id:int}", Name = "GetPost")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -86,6 +89,7 @@ namespace BlogAPI.Controllers
             return _response;
         }
 
+        [Authorize]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -100,9 +104,7 @@ namespace BlogAPI.Controllers
                     //ModelState.AddModelError("", "Post Title already exists");
                     _response.StatusCode=HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
-                    List<string> errors = new List<string>();
-                    errors.Add("Post title already exists");
-                    _response.ErrorMessages = errors;
+                    _response.ErrorMessages.Add("Post title already exists");
                     return BadRequest(_response);
                 }
 
@@ -141,7 +143,7 @@ namespace BlogAPI.Controllers
         }
 
 
-
+        [Authorize]
         [HttpDelete("{id:int}", Name = "DeletePost")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -181,6 +183,7 @@ namespace BlogAPI.Controllers
 
         }
 
+        [Authorize]
         [HttpPut("{id:int}", Name = "PutPost")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -204,7 +207,7 @@ namespace BlogAPI.Controllers
                     Post = postModelDTO.Post,
                     ImageUrl = postModelDTO.ImageUrl,
                     Tag = postModelDTO.Tag,
-                    Created_date = DateTimeOffset.Now.ToUniversalTime(),
+                   // Created_date = DateTimeOffset.Now.ToUniversalTime(),
                     Updated_date = DateTimeOffset.Now.ToUniversalTime()
 
                 };
