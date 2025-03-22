@@ -14,10 +14,14 @@ Log.Logger = new LoggerConfiguration().MinimumLevel.Debug()
     .WriteTo.File("log/postLog.txt",rollingInterval:RollingInterval.Month).CreateLogger(); 
 
 builder.Host.UseSerilog();
-builder.Services.AddDbContext<ApplicationDbContext>(option =>
-{
-    option.UseNpgsql(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
-});
+
+var connectionString = Environment.GetEnvironmentVariable("PrivateConnection");
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(connectionString));
+//builder.Services.AddDbContext<ApplicationDbContext>(option =>
+//{
+//    option.UseNpgsql(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
+//});
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddControllers();
