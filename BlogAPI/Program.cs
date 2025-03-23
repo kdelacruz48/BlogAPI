@@ -29,11 +29,27 @@ builder.Services.AddHealthChecks();
 //var connectionString = Environment.GetEnvironmentVariable("PrivateConnection");
 //builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //    options.UseNpgsql(connectionString));
+//builder.Services.AddDbContext<ApplicationDbContext>(option =>
+//{
+//    option.UseNpgsql(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
+//    //option.UseNpgsql(Environment.GetEnvironmentVariable("PrivateConnection") ?? builder.Configuration.GetValue<string>("DefaultSQLConnection"));
+//});
+
+
 builder.Services.AddDbContext<ApplicationDbContext>(option =>
 {
-    //option.UseNpgsql(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
-    option.UseNpgsql(Environment.GetEnvironmentVariable("PrivateConnection") ?? builder.Configuration.GetValue<string>("DefaultSQLConnection"));
+    var connectionString = Environment.GetEnvironmentVariable("PrivateConnection")
+                           ?? builder.Configuration.GetConnectionString("DefaultSQLConnection");
+
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        throw new InvalidOperationException("Database connection string is not set. Ensure 'PrivateConnection' (Railway) or 'DefaultSQLConnection' (local appsettings) is configured.");
+    }
+
+    option.UseNpgsql(connectionString);
 });
+
+
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddControllers();
