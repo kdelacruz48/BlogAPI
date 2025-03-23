@@ -10,11 +10,16 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 Log.Logger = new LoggerConfiguration().MinimumLevel.Debug()
     .WriteTo.File("log/postLog.txt",rollingInterval:RollingInterval.Month).CreateLogger(); 
 
 builder.Host.UseSerilog();
 
+var port = "8080";
+builder.WebHost.UseUrls($"http://*:{port}");
+
+builder.Services.AddHealthChecks();
 var connectionString = Environment.GetEnvironmentVariable("PrivateConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
@@ -85,7 +90,7 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 //AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-
+app.UseHealthChecks("/health");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
