@@ -19,59 +19,19 @@ Hosting: Railway
 
 Authentication: JWT
 
-🚀 Getting Started
-Prerequisites
-Ensure you have the following installed:
-
-.NET SDK
-
-Docker
-
-PostgreSQL (for local dev, or use Railway)
-
-🔧 Setup
-Clone the repository
-
-sh
-Copy
-Edit
-git clone https://github.com/yourusername/BlogAPI.git
-cd BlogAPI
-Set up environment variables
-
-Create an .env file in the root directory and define:
-
-ini
-Copy
-Edit
-DefaultSQLConnection=your_local_connection_string
-PrivateConnection=your_railway_connection_string
-ApiSettings__Secret=your_jwt_secret
-Run the API locally
-
-sh
-Copy
-Edit
-dotnet run --project BlogAPI
-Run with Docker
-
-sh
-Copy
-Edit
-docker build -t blogapi .
-docker run -p 8080:80 --env-file .env blogapi
-Access Swagger UI
-Open http://localhost:8080/swagger
-
-🐳 Deploying to Railway
+🚀 Deployment on Railway
 Push your code to GitHub
 
 Connect your Railway project to the repo
 
-Add environment variables in Railway settings
+Add the necessary environment variables in Railway settings:
 
+ini
+Copy
+Edit
+PrivateConnection=your_railway_connection_string
+ApiSettings__Secret=your_jwt_secret
 Deploy and access your API 🎉
 
 📜 License
 MIT License. Feel free to use and modify!
-
