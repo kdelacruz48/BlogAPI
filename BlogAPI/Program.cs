@@ -32,7 +32,7 @@ builder.Services.AddHealthChecks();
 builder.Services.AddDbContext<ApplicationDbContext>(option =>
 {
     //option.UseNpgsql(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
-    option.UseNpgsql(Environment.GetEnvironmentVariable("DefaultSQLConnection") ?? builder.Configuration.GetValue<string>("ApiSettings:Secret"));
+    option.UseNpgsql(Environment.GetEnvironmentVariable("PrivateConnection") ?? builder.Configuration.GetValue<string>("DefaultSQLConnection"));
 });
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
