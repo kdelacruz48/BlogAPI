@@ -11,10 +11,16 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 
-Log.Logger = new LoggerConfiguration().MinimumLevel.Debug()
-    .WriteTo.File("log/postLog.txt",rollingInterval:RollingInterval.Month).CreateLogger(); 
+//Log.Logger = new LoggerConfiguration().MinimumLevel.Debug()
+//    .WriteTo.File("log/postLog.txt",rollingInterval:RollingInterval.Month).CreateLogger(); 
 
-builder.Host.UseSerilog();
+//builder.Host.UseSerilog();
+builder.Services.AddControllers();
+
+// Set up logging to use console
+builder.Logging.ClearProviders(); // Clear default loggers
+builder.Logging.AddConsole(); // Add Console logger
+builder.Logging.AddDebug();  // Optional: Add Debug logger (for local debugging)
 
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 builder.WebHost.UseUrls($"http://*:{port}");
