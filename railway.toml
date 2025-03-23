@@ -3,6 +3,6 @@ builder = "dockerfile"
 dockerfilePath = "./BlogAPI/Dockerfile"
 
 [deploy]
-startCommand = "./BlogAPI"
+startCommand = "dotnet BlogAPI.dll"
 restartPolicyType = "always"
 healthcheckPath = "/health"
