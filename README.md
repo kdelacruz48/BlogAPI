@@ -9,7 +9,7 @@ A containerized .NET Core Web API for managing a blog, using PostgreSQL as the d
 ✅ Hosted on Railway
 
 🛠️ Tech Stack
-Backend: .NET Core 7+, ASP.NET Web API
+Backend: .NET Core 9+, ASP.NET Web API
 
 Database: PostgreSQL
 
