@@ -31,14 +31,17 @@ builder.Services.AddHealthChecks();
 //    options.UseNpgsql(connectionString));
 builder.Services.AddDbContext<ApplicationDbContext>(option =>
 {
-    option.UseNpgsql(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
+    //option.UseNpgsql(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
+    option.UseNpgsql(Environment.GetEnvironmentVariable("DefaultSQLConnection") ?? builder.Configuration.GetValue<string>("ApiSettings:Secret"));
 });
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddControllers();
 builder.Services.AddResponseCaching();
 
-var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
+//var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
+var key = Environment.GetEnvironmentVariable("Secret") ??
+    builder.Configuration.GetValue<string>("ApiSettings:Secret");
 
 builder.Services.AddAuthentication(x =>
 {
