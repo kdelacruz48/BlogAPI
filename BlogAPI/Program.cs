@@ -91,7 +91,6 @@ builder.Services.AddSwaggerGen(options =>
 var app = builder.Build();
 //AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 app.UseHealthChecks("/health");
-app.MapHealthChecks("/health");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
