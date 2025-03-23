@@ -20,4 +20,5 @@ FROM mcr.microsoft.com/dotnet/runtime-deps:9.0 AS final
 WORKDIR /app
 Expose 8080
 COPY --from=publish /app/publish .
-ENTRYPOINT ["./BlogAPI"]
+#ENTRYPOINT ["./BlogAPI"]
+ENTRYPOINT ["dotnet", "BlogAPI.dll"]
