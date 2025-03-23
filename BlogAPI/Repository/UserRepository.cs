@@ -17,7 +17,7 @@ namespace BlogAPI.Repository
         public UserRepository(ApplicationDbContext db, IConfiguration configuration)
         {
             _db = db;
-            secretKey = configuration.GetValue<string>("ApiSettings:Secret");
+            secretKey = Environment.GetEnvironmentVariable("Secret") ?? configuration.GetValue<string>("ApiSettings:Secret");
         }
 
         public bool IsUniqueUser(string username)
