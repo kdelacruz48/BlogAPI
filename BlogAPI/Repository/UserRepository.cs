@@ -32,8 +32,9 @@ namespace BlogAPI.Repository
 
         public async Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO)
         {
-            var user = _db.LocalUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDTO.UserName.ToLower()
-            && u.Password == loginRequestDTO.Password);
+            
+
+            var user = _db.LocalUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDTO.UserName.ToLower());
 
             if (user == null)
             {
@@ -42,6 +43,18 @@ namespace BlogAPI.Repository
                     Token = "",
                     User = null
 
+                };
+            }
+
+            var passwordHasher = new PasswordHasher<LocalUser>();
+            var passwordVerificationResult = passwordHasher.VerifyHashedPassword(user, user.Password, loginRequestDTO.Password);
+
+            if (passwordVerificationResult != PasswordVerificationResult.Success)
+            {
+                return new LoginResponseDTO()
+                {
+                    Token = "",
+                    User = null
                 };
             }
 
@@ -60,13 +73,19 @@ namespace BlogAPI.Repository
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            LoginResponseDTO loginResponseDTO = new LoginResponseDTO()
+            return new LoginResponseDTO()
             {
                 Token = tokenHandler.WriteToken(token),
-                User = user
+                User = new LocalUser
+                {
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    Name = user.Name,
+                    Email = user.Email,
+                    Role = user.Role
+                }
             };
-            return loginResponseDTO;
-            
+
         }
 
         public async Task<LocalUser> Register(RegistrationRequestDTO registrationRequestDTO)
@@ -79,6 +98,10 @@ namespace BlogAPI.Repository
                 Email = registrationRequestDTO.Email,
                 Role = registrationRequestDTO.Role
             };
+
+            var passwordHasher = new PasswordHasher<LocalUser>();
+            var hashedPassword = passwordHasher.HashPassword(null, user.Password);
+            user.Password = hashedPassword;
 
             _db.LocalUsers.Add(user);
             await _db.SaveChangesAsync();
