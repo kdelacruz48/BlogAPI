@@ -144,6 +144,7 @@ namespace BlogAPI.Controllers
 
                 _response.Result = post;
                 _response.StatusCode = HttpStatusCode.Created;
+                _response.IsSuccess = true;
                 return CreatedAtRoute("GetPost", new { id = post.Id }, _response);
             }
             catch (Exception ex)
