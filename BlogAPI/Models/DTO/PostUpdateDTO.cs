@@ -12,7 +12,7 @@ namespace BlogAPI.Models.DTO
         [MaxLength(100)]
         public string Title { get; set; }
         [Required]
-        [MaxLength(500)]
+        [MaxLength(5000)]
         public string Post { get; set; }
         public string? ImageUrl { get; set; }
         public string Tag { get; set; }
