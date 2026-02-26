@@ -51,14 +51,19 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowLocalhost",
+    options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173")
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
+            policy.WithOrigins(
+                "https://frontend-production.up.railway.app", // temporary frontend URL
+                "https://kylesisland.com"                     // final domain
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod();
         });
 });
+
+
 
 
 
@@ -138,6 +143,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors("AllowLocalhost");
 app.MapControllers();
+app.UseCors("AllowFrontend");
 
 
 app.Run();
