@@ -55,8 +55,9 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy.WithOrigins(
-                "https://reactfrontend-production-5d75.up.railway.app/", // temporary frontend URL
-                "https://kylesisland.com"                     // final domain
+                "https://reactfrontend-production-5d75.up.railway.app",
+                "https://kylesisland.com",
+                "https://www.kylesisland.com"
             )
             .AllowAnyHeader()
             .AllowAnyMethod();
