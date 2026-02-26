@@ -58,7 +58,7 @@ builder.Services.AddCors(options =>
                 "https://reactfrontend-production-5d75.up.railway.app",
                 "https://kylesisland.com",
                 "https://www.kylesisland.com",
-                "http://localhost:5173/"
+                "http://localhost:5173"
             )
             .AllowAnyHeader()
             .AllowAnyMethod();
