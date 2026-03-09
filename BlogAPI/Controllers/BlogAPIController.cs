@@ -26,7 +26,6 @@ namespace BlogAPI.Controllers
 
         [Authorize]
         [HttpGet]
-        [ResponseCache(Duration = 30)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> GetPosts([FromQuery] string? tag)
